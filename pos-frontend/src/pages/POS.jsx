@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 
 const productsData = [
   { id: 1, name: "Oud Perfume", price: 120, category: "Perfumes" },
@@ -12,7 +13,15 @@ const productsData = [
 const categories = ["All", "Perfumes", "Oils", "Flacons"];
 
 export default function POS() {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+  const savedCart = localStorage.getItem("pos_cart");
+  return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  useEffect(() => {
+  localStorage.setItem("pos_cart", JSON.stringify(cart));
+}, [cart]);
+
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -48,7 +57,18 @@ export default function POS() {
     setCart(cart.filter((item) => item.id !== id));
   };
 
-  const clearCart = () => setCart([]);
+  const clearCart = () => {
+  const sales = JSON.parse(localStorage.getItem("pos_sales")) || [];
+  const newSale = {
+    id: Date.now(),
+    items: cart,
+    total: total,
+    date: new Date().toLocaleString(),
+  };
+
+  localStorage.setItem("pos_sales", JSON.stringify([...sales, newSale]));
+  setCart([]);
+};
 
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.qty,
