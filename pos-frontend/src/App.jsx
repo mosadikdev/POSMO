@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import POS from "./pages/POS";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import AddProduct from "./pages/AddProduct";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -35,6 +36,16 @@ export default function App() {
             >
               Dashboard
             </button>
+
+            
+          )}
+
+          {user.role === "admin" && (
+            <button onClick={()=>setPage("products")}>
+Products
+</button>
+
+            
           )}
         </div>
 
@@ -46,7 +57,9 @@ export default function App() {
         </div>
       </div>
 
-      {page === "pos" ? <POS /> : <Dashboard />}
+      {page === "pos" && <POS />}
+{page === "dashboard" && <Dashboard />}
+{page === "products" && <AddProduct />}
     </div>
   );
 }

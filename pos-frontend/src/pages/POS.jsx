@@ -1,23 +1,21 @@
 import { useState, useEffect } from "react";
 import Receipt from "../components/Receipt";
 
-const productsData = [
+const defaultProducts = [
   { id: 1, name: "Oud Perfume", price: 120, category: "Perfumes" },
   { id: 2, name: "Rose Oil", price: 50, category: "Oils" },
   { id: 3, name: "Amber Oil", price: 70, category: "Oils" },
   { id: 4, name: "Flacon 30ml", price: 15, category: "Flacons" },
-  { id: 5, name: "Flacon 50ml", price: 20, category: "Flacons" },
-  { id: 6, name: "Musk Perfume", price: 100, category: "Perfumes" },
 ];
 
 const categories = ["All", "Perfumes", "Oils", "Flacons"];
 
 export default function POS() {
 
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem("pos_cart");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const [products, setProducts] = useState(() => {
+  const saved = localStorage.getItem("pos_products");
+  return saved ? JSON.parse(saved) : defaultProducts;
+});
 
   const [lastSale, setLastSale] = useState(null);
   const [search, setSearch] = useState("");
@@ -68,7 +66,7 @@ export default function POS() {
     setCart([]);
   };
 
-  const filteredProducts = productsData.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     const matchCategory =
       selectedCategory === "All" ||
       product.category === selectedCategory;
