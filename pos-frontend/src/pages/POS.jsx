@@ -13,9 +13,14 @@ const categories = ["All", "Perfumes", "Oils", "Flacons"];
 export default function POS() {
 
   const [products, setProducts] = useState(() => {
-  const saved = localStorage.getItem("pos_products");
-  return saved ? JSON.parse(saved) : defaultProducts;
-});
+    const saved = localStorage.getItem("pos_products");
+    return saved ? JSON.parse(saved) : defaultProducts;
+  });
+
+  const [cart, setCart] = useState(() => {
+    const saved = localStorage.getItem("pos_cart");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [lastSale, setLastSale] = useState(null);
   const [search, setSearch] = useState("");
