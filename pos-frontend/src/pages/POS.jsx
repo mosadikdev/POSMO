@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Receipt from "../components/Receipt";
+import axios from "axios";
 
 const defaultProducts = [
   { id: 1, name: "Oud Perfume", price: 120, category: "Perfumes" },
@@ -12,10 +13,7 @@ const categories = ["All", "Perfumes", "Oils", "Flacons"];
 
 export default function POS() {
 
-  const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem("pos_products");
-    return saved ? JSON.parse(saved) : defaultProducts;
-  });
+  const [products, setProducts] = useState([]);
 
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem("pos_cart");
@@ -29,6 +27,17 @@ export default function POS() {
   useEffect(() => {
     localStorage.setItem("pos_cart", JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+  axios
+    .get("http://localhost:5000/products")
+    .then((res) => {
+      setProducts(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, []);
 
   const addToCart = (product) => {
     const existing = cart.find((item) => item.id === product.id);
