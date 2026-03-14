@@ -1,36 +1,44 @@
 import { useState } from "react";
+import axios from "axios";
 
 export default function AddProduct() {
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
+  const [stock, setStock] = useState("");
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
 
-    const products =
-      JSON.parse(localStorage.getItem("pos_products")) || [];
+  try {
 
     const newProduct = {
-      id: Date.now(),
       name,
       price: Number(price),
       category,
+      stock: Number(stock)
     };
 
-    const updated = [...products, newProduct];
-
-    localStorage.setItem(
-      "pos_products",
-      JSON.stringify(updated)
+    await axios.post(
+      "http://localhost:5000/products",
+      newProduct
     );
+
+    alert("Product added successfully");
 
     setName("");
     setPrice("");
     setCategory("");
+    setStock("");
 
-    alert("Product added");
-  };
+  } catch (error) {
+
+    console.log(error);
+    alert("Error adding product");
+
+  }
+
+};
 
   return (
     <div className="p-10">
@@ -60,6 +68,13 @@ export default function AddProduct() {
           placeholder="Category"
           value={category}
           onChange={(e)=>setCategory(e.target.value)}
+        />
+
+        <input
+          className="w-full border p-2"
+          placeholder="Stock"
+          value={stock}
+          onChange={(e)=>setStock(e.target.value)}
         />
 
         <button
