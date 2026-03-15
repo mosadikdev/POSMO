@@ -40,12 +40,12 @@ export default function POS() {
 }, []);
 
   const addToCart = (product) => {
-    const existing = cart.find((item) => item.id === product.id);
+    const existing = cart.find((item) => item._id === product._id);
 
     if (existing) {
       setCart(
         cart.map((item) =>
-          item.id === product.id
+          item._id === product._id
             ? { ...item, qty: item.qty + 1 }
             : item
         )
@@ -59,7 +59,7 @@ export default function POS() {
     setCart(
       cart
         .map((item) =>
-          item.id === id
+          item._id === id
             ? { ...item, qty: item.qty - 1 }
             : item
         )
@@ -68,7 +68,7 @@ export default function POS() {
   };
 
   const removeItem = (id) => {
-    setCart(cart.filter((item) => item.id !== id));
+    setCart(cart.filter((item) => item._id !== id));
   };
 
   const total = cart.reduce(
@@ -148,7 +148,7 @@ export default function POS() {
           <div className="grid grid-cols-4 gap-4 auto-rows-[140px] overflow-y-auto">
             {filteredProducts.map((p) => (
               <div
-                key={p.id}
+                key={p._id}
                 onClick={() => addToCart(p)}
                 className="bg-white shadow rounded flex flex-col items-center justify-center text-center font-semibold cursor-pointer hover:bg-green-100 transition"
               >
@@ -181,7 +181,7 @@ export default function POS() {
 
             {cart.map((item) => (
               <div
-                key={item.id}
+                key={item._id}
                 className="border rounded p-2 shadow-sm"
               >
                 <div className="flex justify-between font-semibold">
@@ -193,7 +193,7 @@ export default function POS() {
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => decreaseQty(item.id)}
+                      onClick={() => decreaseQty(item._id)}
                       className="px-2 bg-gray-200 rounded"
                     >
                       -
@@ -212,7 +212,7 @@ export default function POS() {
                   </div>
 
                   <button
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => removeItem(item._id)}
                     className="text-red-500 text-sm"
                   >
                     Delete
