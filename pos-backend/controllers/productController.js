@@ -15,3 +15,14 @@ exports.deleteProduct = async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ message: "deleted" });
 };
+
+
+exports.updateProduct = async (req, res) => {
+  const updated = await Product.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+
+  res.json(updated);
+};

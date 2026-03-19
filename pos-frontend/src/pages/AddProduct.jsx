@@ -10,6 +10,7 @@ export default function AddProduct() {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [stock, setStock] = useState("");
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const fetchProducts = () => {
     axios.get("http://localhost:5000/products")
@@ -22,34 +23,62 @@ export default function AddProduct() {
   }, []);
 
   const handleAdd = async () => {
-    try {
+  try {
 
-      await axios.post("http://localhost:5000/products", {
-        name,
-        price: Number(price),
-        category,
-        stock: Number(stock)
-      });
+    const productData = {
+      name,
+      price: Number(price),
+      category,
+      stock: Number(stock)
+    };
 
-      alert("Product added");
-
-      setName("");
-      setPrice("");
-      setCategory("");
-      setStock("");
-
-      setView("list");
-      fetchProducts();
-
-    } catch (err) {
-      console.log(err);
+    if (editingProduct) {
+      // ✏️ UPDATE
+      await axios.put(
+        `http://localhost:5000/products/${editingProduct._id}`,
+        productData
+      );
+    } else {
+      // ➕ ADD
+      await axios.post(
+        "http://localhost:5000/products",
+        productData
+      );
     }
-  };
+
+    alert("Saved successfully");
+
+    setName("");
+    setPrice("");
+    setCategory("");
+    setStock("");
+    setEditingProduct(null);
+
+    setView("list");
+    fetchProducts();
+
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   const handleDelete = async (id) => {
     await axios.delete(`http://localhost:5000/products/${id}`);
     fetchProducts();
   };
+
+
+  const handleEdit = (product) => {
+  setEditingProduct(product);
+
+  setName(product.name);
+  setPrice(product.price);
+  setCategory(product.category);
+  setStock(product.stock);
+
+  setView("add");
+};
+
 
   return (
     <div className="p-6">
@@ -58,8 +87,8 @@ export default function AddProduct() {
       <div className="flex justify-between items-center mb-6">
 
         <h1 className="text-2xl font-bold">
-          Products
-        </h1>
+  {editingProduct ? "Edit Product" : "Add Product"}
+</h1>
 
         {view === "list" && (
           <button
@@ -96,6 +125,13 @@ export default function AddProduct() {
               >
                 Delete
               </button>
+
+              <button
+  onClick={() => handleEdit(p)}
+  className="mt-2 text-blue-500 text-sm mr-2"
+>
+  Edit
+</button>
 
             </div>
           ))}
