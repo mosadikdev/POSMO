@@ -92,8 +92,14 @@ export default function POS() {
     return matchCategory && matchSearch;
   });
 
-  const handlePay = () => {
-    if (cart.length === 0) return;
+ const handlePay = async () => {
+  if (cart.length === 0) return;
+
+  try {
+
+    await axios.post("http://localhost:5000/sales", {
+      items: cart
+    });
 
     const sale = {
       id: Date.now(),
@@ -112,7 +118,14 @@ export default function POS() {
 
     setLastSale(sale);
     setCart([]);
-  };
+
+    const res = await axios.get("http://localhost:5000/products");
+    setProducts(res.data);
+
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   return (
     <>
@@ -149,7 +162,7 @@ export default function POS() {
             {filteredProducts.map((p) => (
               <div
                 key={p._id}
-                onClick={() => addToCart(p)}
+                onClick={() => p.stock > 0 && addToCart(p)}
                 className="bg-white shadow rounded flex flex-col items-center justify-center text-center font-semibold cursor-pointer hover:bg-green-100 transition"
               >
                 <div>{p.name}</div>
@@ -159,6 +172,11 @@ export default function POS() {
                 <div className="text-xs text-gray-400">
                   {p.category}
                 </div>
+                {p.stock === 0 && (
+  <div className="text-red-500 text-xs">
+    Out of stock
+  </div>
+)}
               </div>
             ))}
           </div>
