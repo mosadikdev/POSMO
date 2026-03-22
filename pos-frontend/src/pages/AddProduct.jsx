@@ -107,33 +107,55 @@ export default function AddProduct() {
 
           {products.map((p) => (
             <div
-              key={p._id}
-              className="border p-3 rounded shadow"
-            >
-              <div className="font-bold">{p.name}</div>
-              <div>{p.price} DH</div>
-              <div className="text-sm text-gray-500">
-                {p.category}
-              </div>
-              <div className="text-sm">
-                Stock: {p.stock}
-              </div>
-
-              <button
-                onClick={() => handleDelete(p._id)}
-                className="mt-2 text-red-500 text-sm"
-              >
-                Delete
-              </button>
-
-              <button
-  onClick={() => handleEdit(p)}
-  className="mt-2 text-blue-500 text-sm mr-2"
+  key={p._id}
+  className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col justify-between"
 >
-  Edit
-</button>
+  <div>
+    <h2 className="font-bold text-lg mb-1">
+      {p.name}
+    </h2>
 
-            </div>
+    <p className="text-gray-500 text-sm">
+      {p.category}
+    </p>
+  </div>
+
+  <div className="mt-3">
+    <p className="text-green-600 font-bold text-lg">
+      {p.price} DH
+    </p>
+
+    <div className="mt-1 text-sm">
+      {p.stock > 0 ? (
+        <span className="text-gray-600">
+          Stock: {p.stock}
+        </span>
+      ) : (
+        <span className="text-red-500 font-semibold">
+          Out Of Stock
+        </span>
+      )}
+    </div>
+  </div>
+
+  <div className="flex justify-between mt-4">
+
+    <button
+      onClick={() => handleEdit(p)}
+      className="text-blue-500 text-sm hover:underline"
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => handleDelete(p._id)}
+      className="text-red-500 text-sm hover:underline"
+    >
+      Delete
+    </button>
+
+  </div>
+</div>
           ))}
 
         </div>
