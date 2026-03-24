@@ -11,6 +11,7 @@ export default function AddProduct() {
   const [category, setCategory] = useState("");
   const [stock, setStock] = useState("");
   const [editingProduct, setEditingProduct] = useState(null);
+  const [search, setSearch] = useState("");
 
   const fetchProducts = () => {
     axios.get("http://localhost:5000/products")
@@ -80,6 +81,10 @@ export default function AddProduct() {
 };
 
 
+const filteredProducts = products.filter((p) =>
+  p.name.toLowerCase().includes(search.toLowerCase())
+);
+
   return (
     <div className="p-6">
 
@@ -89,6 +94,9 @@ export default function AddProduct() {
         <h1 className="text-2xl font-bold">
   {editingProduct ? "Edit Product" : "Add Product"}
 </h1>
+
+
+
 
         {view === "list" && (
           <button
@@ -101,62 +109,74 @@ export default function AddProduct() {
 
       </div>
 
+      <input
+  type="text"
+  placeholder="Search product..."
+  className="mb-4 p-2 border rounded w-full"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+/>
+
       {/* LIST */}
       {view === "list" && (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="space-y-3">
 
-          {products.map((p) => (
-            <div
-  key={p._id}
-  className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col justify-between"
->
-  <div>
-    <h2 className="font-bold text-lg mb-1">
-      {p.name}
-    </h2>
+          {filteredProducts.map((p) => (
+  <div
+    key={p._id}
+    className="bg-white p-4 rounded-lg shadow flex justify-between items-center hover:shadow-md transition"
+  >
 
-    <p className="text-gray-500 text-sm">
-      {p.category}
-    </p>
-  </div>
+    {/* LEFT */}
+    <div>
+      <h2 className="font-bold text-lg">
+        {p.name}
+      </h2>
 
-  <div className="mt-3">
-    <p className="text-green-600 font-bold text-lg">
-      {p.price} DH
-    </p>
+      <p className="text-sm text-gray-500">
+        {p.category}
+      </p>
 
-    <div className="mt-1 text-sm">
-      {p.stock > 0 ? (
-        <span className="text-gray-600">
-          Stock: {p.stock}
-        </span>
-      ) : (
-        <span className="text-red-500 font-semibold">
-          Out Of Stock
-        </span>
-      )}
+      <p className="text-green-600 font-semibold">
+        {p.price} DH
+      </p>
     </div>
+
+    {/* RIGHT */}
+    <div className="flex items-center gap-4">
+
+      {/* STOCK */}
+      <div className="text-sm">
+        {p.stock > 0 ? (
+          <span className="text-gray-600">
+            {p.stock}
+          </span>
+        ) : (
+          <span className="text-red-500 font-bold">
+            Out Of Stock
+          </span>
+        )}
+      </div>
+
+      {/* ACTIONS */}
+      <button
+        onClick={() => handleEdit(p)}
+        className="text-blue-500 text-sm"
+      >
+        Edit
+      </button>
+
+      <button
+        onClick={() => handleDelete(p._id)}
+        className="text-red-500 text-sm"
+      >
+        Delete
+      </button>
+
+    </div>
+
   </div>
-
-  <div className="flex justify-between mt-4">
-
-    <button
-      onClick={() => handleEdit(p)}
-      className="text-blue-500 text-sm hover:underline"
-    >
-      Edit
-    </button>
-
-    <button
-      onClick={() => handleDelete(p._id)}
-      className="text-red-500 text-sm hover:underline"
-    >
-      Delete
-    </button>
-
-  </div>
-</div>
-          ))}
+))}
 
         </div>
       )}
