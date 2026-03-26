@@ -85,6 +85,32 @@ const filteredProducts = products.filter((p) =>
   p.name.toLowerCase().includes(search.toLowerCase())
 );
 
+const getStockLabel = (stock) => {
+  const safeStock = Math.max(stock, 0);
+
+  if (safeStock === 0) {
+    return (
+      <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-semibold">
+        Out of stock (0)
+      </span>
+    );
+  }
+
+  if (safeStock <= 5) {
+    return (
+      <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
+        The quantity is small ({safeStock})
+      </span>
+    );
+  }
+
+  return (
+    <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+      Available ({safeStock})
+    </span>
+  );
+};
+
   return (
     <div className="p-6">
 
@@ -109,77 +135,96 @@ const filteredProducts = products.filter((p) =>
 
       </div>
 
-      <input
-  type="text"
-  placeholder="Search product..."
-  className="mb-4 p-2 border rounded w-full"
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-/>
 
       {/* LIST */}
       {view === "list" && (
-        <div className="space-y-3">
+  <div className="space-y-4">
 
-          {filteredProducts.map((p) => (
-  <div
-    key={p._id}
-    className="bg-white p-4 rounded-lg shadow flex justify-between items-center hover:shadow-md transition"
-  >
+    {/* top bar */}
+    <div className="bg-white rounded-xl shadow p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <input
+        type="text"
+        placeholder="Search product..."
+        className="w-full md:w-80 border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-400"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
-    {/* LEFT */}
-    <div>
-      <h2 className="font-bold text-lg">
-        {p.name}
-      </h2>
-
-      <p className="text-sm text-gray-500">
-        {p.category}
-      </p>
-
-      <p className="text-green-600 font-semibold">
-        {p.price} DH
-      </p>
-    </div>
-
-    {/* RIGHT */}
-    <div className="flex items-center gap-4">
-
-      {/* STOCK */}
-      <div className="text-sm">
-        {p.stock > 0 ? (
-          <span className="text-gray-600">
-            {p.stock}
-          </span>
-        ) : (
-          <span className="text-red-500 font-bold">
-            Out Of Stock
-          </span>
-        )}
+      <div className="text-sm text-gray-500">
+        Total products: <span className="font-bold text-black">{products.length}</span>
       </div>
-
-      {/* ACTIONS */}
-      <button
-        onClick={() => handleEdit(p)}
-        className="text-blue-500 text-sm"
-      >
-        Edit
-      </button>
-
-      <button
-        onClick={() => handleDelete(p._id)}
-        className="text-red-500 text-sm"
-      >
-        Delete
-      </button>
-
     </div>
+
+    {/* empty state */}
+    {products.length === 0 && (
+      <div className="bg-white rounded-xl shadow p-10 text-center text-gray-500">
+        No products yet.
+      </div>
+    )}
+
+    {/* no search result */}
+    {products.length > 0 && filteredProducts.length === 0 && (
+      <div className="bg-white rounded-xl shadow p-10 text-center text-gray-500">
+        No product found for: <span className="font-semibold">{search}</span>
+      </div>
+    )}
+
+    {/* list */}
+    {filteredProducts.length > 0 && (
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="grid grid-cols-12 bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-600">
+          <div className="col-span-4">Product</div>
+          <div className="col-span-2">Category</div>
+          <div className="col-span-2">Price</div>
+          <div className="col-span-2">Stock</div>
+          <div className="col-span-2 text-right">Actions</div>
+        </div>
+
+        <div className="divide-y">
+          {filteredProducts.map((p) => (
+            <div
+              key={p._id}
+              className="grid grid-cols-12 items-center px-4 py-4 hover:bg-gray-50 transition"
+            >
+              <div className="col-span-4">
+                <h2 className="font-semibold text-gray-800">{p.name}</h2>
+              </div>
+
+              <div className="col-span-2 text-sm text-gray-500">
+                {p.category}
+              </div>
+
+              <div className="col-span-2 font-semibold text-green-600">
+                {p.price} DH
+              </div>
+
+              <div className="col-span-2">
+                {getStockLabel(p.stock)}
+              </div>
+
+              <div className="col-span-2 flex justify-end gap-3">
+                <button
+                  onClick={() => handleEdit(p)}
+                  className="px-3 py-1 rounded-md bg-blue-50 text-blue-600 text-sm font-medium hover:bg-blue-100"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => handleDelete(p._id)}
+                  className="px-3 py-1 rounded-md bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
 
   </div>
-))}
-
-        </div>
-      )}
+)}
 
       {/* FORM */}
       {view === "add" && (
